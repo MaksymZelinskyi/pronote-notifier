@@ -1,4 +1,4 @@
-package com.maksymzelinskyi;
+package com.maksymzelinskyi.data;
 
 import java.util.ArrayList;
 import java.util.List;

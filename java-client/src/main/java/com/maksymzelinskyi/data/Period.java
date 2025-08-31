@@ -1,4 +1,4 @@
-package com.maksymzelinskyi;
+package com.maksymzelinskyi.data;
 
 import java.time.LocalDate;
 

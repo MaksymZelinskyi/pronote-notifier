@@ -1,7 +1,7 @@
-package com.maksymzelinskyi;
+package com.maksymzelinskyi.service;
 
+import com.maksymzelinskyi.util.PropertiesHolder;
 import com.pengrad.telegrambot.TelegramBot;
-import com.pengrad.telegrambot.request.BaseRequest;
 import com.pengrad.telegrambot.request.SendMessage;
 
 public class TelegramMessanger {

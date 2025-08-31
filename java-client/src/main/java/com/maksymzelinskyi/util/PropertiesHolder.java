@@ -1,4 +1,6 @@
-package com.maksymzelinskyi;
+package com.maksymzelinskyi.util;
+
+import com.maksymzelinskyi.Main;
 
 import java.io.IOException;
 import java.util.Properties;

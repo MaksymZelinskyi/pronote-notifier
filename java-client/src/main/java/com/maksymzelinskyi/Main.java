@@ -1,74 +1,32 @@
 package com.maksymzelinskyi;
 
-import java.io.*;
-import java.lang.reflect.Type;
-import java.net.InetAddress;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.util.ArrayList;
-import java.util.Collections;
+import com.maksymzelinskyi.data.Grade;
+import com.maksymzelinskyi.service.Client;
+import com.maksymzelinskyi.service.GradeService;
+import com.maksymzelinskyi.service.TelegramMessanger;
+
 import java.util.List;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 public class Main {
     
-    private HttpClient httpClient;
-    private static final String FILE_PATH = "classpath:last-period.json";
-    private List<Grade> lastFetched;
+    private Client client;
+    private GradeService gradeService;
+    private TelegramMessanger messanger;
 
     public Main() {
-        try {
-            httpClient = HttpClient.newBuilder().localAddress(InetAddress.getLocalHost()).build();
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        
+        client = new Client();
+        gradeService = new GradeService();
+        messanger = new TelegramMessanger();
     }
     public static void main(String[] args) {
-        TelegramMessanger messanger = new TelegramMessanger();
-        messanger.sendMessage("Hello, my master");
-    }
-
-    public List<Grade> fetchGrades() {
-        try {
-            String json = httpClient.send(HttpRequest.newBuilder().GET().uri(URI.create("https://localhost:8080/grades")).build(), HttpResponse.BodyHandlers.ofString()).body();
-            Gson gson = new Gson();
-            Type type = new TypeToken<List<Grade>>(){}.getType();
-            List<Grade> grades = gson.fromJson(json, type);
-            for (int i = 0; i < grades.size(); i++) {
-                System.out.println(grades.get(i));
-            }
-            return grades;
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        return Collections.emptyList();
-    }
-
-    private List<Grade> diff(List<Grade> list) {
-        List<Grade> diff = new ArrayList<>();
-        try {
-            Reader reader = new FileReader(FILE_PATH);
-            Gson gson = new Gson();
-            FetchedGrades fg = gson.fromJson(reader, FetchedGrades.class);
-            for(int i = list.size()-1; i>=0; i--) {
-                if(!fg.getGrades().contains(list.get(i))) {
-                    diff.add(list.get(i));
-                }
-            }
-        } catch (IOException e) {
-            System.out.println(e);
-        }
-        return list;
+        Main main = new Main();
+        main.sendGrades(6);
     }
 
     public void sendNotif() {
-        List<Grade> grades = fetchGrades();
-        grades = diff(grades);
+        List<Grade> grades = client.fetchGrades();
+        grades = gradeService.diff(grades);
         if(grades.size()==1) {
             sendGrade(grades.get(0));
         } else if (grades.size()>1) {
@@ -77,10 +35,15 @@ public class Main {
     }
 
     public void sendGrade(Grade grade) {
-
+        String comment = grade.comment();
+        sendMessage("Vous avez reçu une nouvelle note " + (comment!=null && !comment.isEmpty() ? "avec le commentaire: \"" + comment + "\"" : "."));
     }
 
     public void sendGrades(int qty) {
+        sendMessage("Vous avez reçu " + qty + " nouvelles notes");
+    }
 
+    public void sendMessage(String message) {
+        messanger.sendMessage(message);
     }
 }
