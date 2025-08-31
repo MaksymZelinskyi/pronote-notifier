@@ -29,7 +29,8 @@ public class Main {
         
     }
     public static void main(String[] args) {
-
+        TelegramMessanger messanger = new TelegramMessanger();
+        messanger.sendMessage("Hello, my master");
     }
 
     public List<Grade> fetchGrades() {
@@ -65,4 +66,21 @@ public class Main {
         return list;
     }
 
+    public void sendNotif() {
+        List<Grade> grades = fetchGrades();
+        grades = diff(grades);
+        if(grades.size()==1) {
+            sendGrade(grades.get(0));
+        } else if (grades.size()>1) {
+            sendGrades(grades.size());
+        }
+    }
+
+    public void sendGrade(Grade grade) {
+
+    }
+
+    public void sendGrades(int qty) {
+
+    }
 }
