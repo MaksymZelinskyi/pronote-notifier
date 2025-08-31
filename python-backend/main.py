@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 import pronotepy
 from flask import Flask, jsonify
 
+load_dotenv()
 
 client = pronotepy.Client(pronote_url=os.getenv("PRONOTE_URL"),
                           username=os.getenv("USERNAME"),
